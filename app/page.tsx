@@ -5,13 +5,17 @@ export default async function Page() {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: sales } = await supabase.from('sales').select()
+  const { data: sales, error } = await supabase.from('sales').select()
 
   return (
-    <ul>
-      {sales?.map((todo) => (
-        <li key={todo.id}>{todo.name}</li>
-      ))}
-    </ul>
+    <div>
+      {error && <pre>Error: {JSON.stringify(error, null, 2)}</pre>}
+      {!error && (!sales || sales.length === 0) && <p>No sales found</p>}
+      <ul>
+        {sales?.map((sale) => (
+          <li key={sale.id}>{JSON.stringify(sale)}</li>
+        ))}
+      </ul>
+    </div>
   )
 }
